@@ -12,11 +12,11 @@ namespace Martinezdelariva\Railway\Either;
 
 class Right implements Either
 {
-    private $value;
+    protected $value;
 
     public static function of($value)
     {
-        return new self($value);
+        return new static($value);
     }
 
     private function __construct($value)

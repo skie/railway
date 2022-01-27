@@ -9,6 +9,7 @@
 declare(strict_types=1);
 
 namespace Martinezdelariva\Railway;
+use Martinezdelariva\Railway\Either\Either;
 
 function bind(callable $switch): callable {
     return (new Bind())($switch);
@@ -40,4 +41,33 @@ function doubleMap(callable $oneTrackRight, callable $oneTrackLeft): callable {
 
 function plus(callable $addRight, callable $addLeft, callable $switch1, callable $switch2): callable {
     return (new Plus())($addRight, $addLeft, $switch1, $switch2);
+};
+
+function pipeCalc($initial, $operations) {
+	$result = $initial;
+	foreach ($operations as $k => $operation) {
+		$result = $operation($result);
+	}
+
+	return $result;
+};
+
+function pipe(callable ...$operations): callable {
+	return fn ($initial) => pipeCalc($initial, $operations);
+};
+
+/**
+ * Iterate an array or other foreach-able without making a copy of it.
+ *
+ * @param array|\Traversable $iterable
+ * @return Generator
+ */
+function iter_reverse($iterable) {
+    for (end($iterable); ($key=key($iterable))!==null; prev($iterable)){
+        yield $key => current($iterable);
+    }
+}
+
+function compose(callable ...$operations): callable {
+	return fn ($initial) => pipeCalc($initial, iter_reverse($operations));
 };

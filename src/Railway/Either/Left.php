@@ -16,7 +16,7 @@ class Left implements Either
 
     public static function of($value)
     {
-        return new self($value);
+        return new static($value);
     }
 
     private function __construct($value)
